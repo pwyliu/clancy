@@ -14,16 +14,16 @@ Usage:
     clancy.py --version
 
 Options:
-    --time <time>      Delgation time string.
+    --time <time>      Delegation time string.
     --usages <usages>  Delegation usages.
 
     --action <action>  Preform action on target. One of: revoke, admin, delete.
     --target <target>  User to modify.
 
     --owners <owners>  Comma separated list of owners.
-    --min <minimum>    Minumum delegations required to decrypt data.
-    --str <string>     Base64 encoded string to encrypt.
-    --file <path>      Path to a file of base64 encoded data to encrypt.
+    --min <minimum>    Minimum delegations required to decrypt data.
+    --str <string>     Base64 encoded string to operate on.
+    --file <path>      Path to a file of base64 encoded data to operate on.
 
     -u, --user <user>  User to log in as. Defaults to current user.
     -h, --help         Show this help message and exit.
