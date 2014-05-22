@@ -57,4 +57,4 @@ venv
 .idea/
 instance/
 *.swp
-
+clancy.conf

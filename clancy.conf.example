@@ -1,0 +1,6 @@
+{
+  "_comment": "Items in this file can also overide cli args. See README",
+  "user": "redoctoberadmin",
+  "server": "redoctober.mydomain.local",
+  "ca_cert": "/etc/ssl/certs/my_cacert.pem"
+}
