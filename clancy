@@ -1,17 +1,18 @@
 #!/usr/bin/env python
-"""clancy.py
+"""clancy
 
 Usage:
-    clancy.py create [--user <user> --server <server> --cacert <cacert_path>]
-    clancy.py delegate --time <time> --uses <uses> [--user <user> --server <server> --cacert <cacert_path>]
-    clancy.py encrypt --owners <owners> --min <minimum> (--str <string> | --file <path>) [--user <user> --server <server> --cacert <cacert_path>]
-    clancy.py decrypt (--str <string> | --file <path>) [--user <user> --server <server> --cacert <cacert_path>]
-    clancy.py summary [--user <user> --server <server> --cacert <cacert_path>]
-    clancy.py change-password [--user <user> --server <server> --cacert <cacert_path>]
-    clancy.py modify --action <action> --target <target> [--user <user> --server <server> --cacert <cacert_path>]
+    clancy create [--user <user> --server <server> --cacert <cacert_path>]
+    clancy delegate --time <time> --uses <uses> [--user <user> --server <server> --cacert <cacert_path>]
+    clancy encrypt --owners <owners> --min <minimum> (--str <string> | --file <path>) [--user <user> --server <server> --cacert <cacert_path>]
+    clancy decrypt (--str <string> | --file <path>) [--user <user> --server <server> --cacert <cacert_path>]
+    clancy summary [--user <user> --server <server> --cacert <cacert_path>]
+    clancy change-password [--user <user> --server <server> --cacert <cacert_path>]
+    clancy modify --action <action> --target <target> [--user <user> --server <server> --cacert <cacert_path>]
+    clancy base64-encode
 
-    clancy.py --help
-    clancy.py --version
+    clancy --help
+    clancy --version
 
 Commands:
     create:           Create a new vault.
@@ -22,20 +23,21 @@ Commands:
     summary:          Provides a list of users with keys on the system.
     change-password:  Change your password.
     modify:           Modify the state of another user.
+    base64-encode     Returns a base64 encoded string for upload to Red October.
 
 Options:
-    --time <time>      Delegation time string.
-    --uses <uses>      Delegation usages.
+    --time <time>      Delegation time string. Use Go duration string format. Ex: "2h30m"
+    --uses <uses>      Delegation usages. Must be an integer.
 
     --action <action>  Preform action on target. One of: revoke, admin, delete.
     --target <target>  User to modify.
 
     --owners <owners>  Comma separated list of owners.
-    --min <minimum>    Minimum delegations required to decrypt data.
-    --str <string>     Base64 encoded string to operate on.
-    --file <path>      Path to a file of base64 encoded data to operate on.
+    --min <minimum>    Minimum delegations required to decrypt data. Must be an integer.
+    --str <string>     Base64 encoded string.
+    --file <path>      Path to a file of base64 encoded data.
 
-    --user <user>      User to log in as.
+    --user <user>      User to log in as. Defaults to current user.
     --server <server>  Red October server.
     --cacert <cacert>  Absolute path to CA cert.
 
@@ -43,20 +45,19 @@ Options:
     -h, --help         Show this help message and exit.
     -v, --version      Show version and exit.
 """
-from docopt import docopt
+VERSION = '0.0.1'
+
 from socket import timeout as socket_timeout
 import os
 import sys
 import getpass
 import json
-import requests 
-
-# Version string
-VERSION = '0.0.1'
+from docopt import docopt
+import requests
 
 
 def abort(errstr):
-    sys.stderr.write('{}\n'.format(errstr))
+    sys.stderr.write('ERROR: {}\n'.format(errstr))
     sys.exit(1)
 
 
@@ -74,17 +75,17 @@ def goodquit_json(jsondata):
 
 def authenticate(username):
     try:
-        sys.stdout.write('\nAuthenticate\n------------\n')
+        sys.stdout.write('\nEnter password\n--------------\n')
         sys.stdout.write('User: {}\n'.format(username))
         password = getpass.getpass()
     except getpass.GetPassWarning:
-        abort('ERROR: Password may be echoed. GTFO.')
+        abort('Password may be echoed. GTFO.')
         sys.exit(1)
     return password
 
 
 def load_args():
-    config = None
+    config = {}
     locations = [os.curdir, os.path.expanduser("~/.clancy"), "/etc/clancy"]
     for loc in locations:
         try:
@@ -94,9 +95,7 @@ def load_args():
         except IOError:
             pass
         except ValueError:
-            abort('ERROR: Config file not valid json.')
-    if config is None:
-        abort('ERROR: No config file found.')
+            abort('Config file not valid json.')
     return config
 
 
@@ -117,18 +116,18 @@ def api_call(endpoint, params, payload):
                 requests.Timeout,
                 requests.ConnectionError,
                 requests.URLRequired) as ex:
-            abort('ERROR: {}'.format(ex))
+            abort('{}'.format(ex))
         except requests.HTTPError as ex:
-            sys.stderr.write('HTTP ERROR: {}'.format(ex))
+            sys.stderr.write('HTTP {}'.format(ex))
             if attempt >= 3:
-                abort('ERROR: Too many HTTP errors.')
+                abort('Too many HTTP errors.')
     if resp is not None:
         try:
             return resp.json()
         except ValueError:
-            abort('ERROR: unexpected response from server')
+            abort('unexpected response from server')
     else:
-        abort('ERROR: post error')
+        abort('post error')
 
 
 if __name__ == '__main__':
@@ -138,28 +137,57 @@ if __name__ == '__main__':
         conf_args = load_args()
         args = dict(conf_args.items() + cli_args.items())
 
-        # sanity checks
+        # b64 command doesn't care about anything.
+        if args['base64-encode']:
+            raw_str = getpass.getpass('String to encode: ')
+            b64_str = None
+            try:
+                b64_str = raw_str.encode('base64')
+            except TypeError:
+                abort('invalid string')
+            goodquit('{}'.format(b64_str))
+
+        # sanitize args
         if cli_args['--user'] is None:
-            if u'--user' in conf_args:
+            if '--user' in conf_args:
                 args['--user'] = conf_args['--user']
             else:
                 args['--user'] = getpass.getuser()
 
-        if cli_args['--server'] is None:
-            if u'--server' in conf_args:
-                args['--server'] = conf_args['--server']
-            else:
-                abort('ERROR: Server not defined. Pass in as parameter or '
-                      'define in config file. See README for details.')
+        for key in ['--cacert', '--server']:
+            if cli_args[key] is None:
+                if key in conf_args:
+                    args[key] = conf_args[key]
+                else:
+                    abort('{} not defined. Pass in as parameter or '
+                          'define in config file. See READEME for '
+                          'details.'.format(key))
 
-        if cli_args['--cacert'] is None:
-            if u'--cacert' in conf_args:
-                args['--cacert'] = conf_args['--cacert']
+        for key in ['--cacert', '--file']:
+            if args[key] is not None:
+                if not os.path.isfile(args[key]):
+                    abort('file {} not found.'.format(args[key]))
+
+        for key in ['--min', '--uses']:
+            if args[key] is not None:
+                try:
+                    args[key] = int(args[key])
+                except ValueError:
+                    abort("{} must be an integer.".format(key))
+
+        if (args['--owners'] is not None
+                and not len(args['--owners'].split(',')) >= 2):
+            abort('--owners must be >= 2')
+
+        if args['encrypt'] or args['decrypt']:
+            if args['--file'] is not None:
+                try:
+                    with open(args['--file']) as datafile:
+                        args['--data'] = datafile.read()
+                except IOError:
+                    abort("couldn't open file {}".format(args['--file']))
             else:
-                abort('ERROR: CA cert path not defined. Pass in as parameter '
-                      'or define in config file. See README for details.')
-        if not os.path.isfile(args['--cacert']):
-            abort('ERROR: CA file not found.')
+                args['--data'] = args['--str']
 
         # get password
         args['--password'] = authenticate(args['--user'])
@@ -177,35 +205,25 @@ if __name__ == '__main__':
                 'Name': args['--user'],
                 'Password': args['--password'],
                 'Time': args['--time'],
-                'Uses': int(args['--uses']),
+                'Uses': args['--uses'],
             })
             goodquit_json(api_call('delegate', args, upload))
 
         elif args['encrypt']:
-            if args['--file']:
-                abort('ERROR: not implemented.')
-            else:
-                enc_data = args['--str']
-
             upload = json.dumps({
                 'Name': args['--user'],
                 'Password': args['--password'],
-                'Minimum': int(args['--min']),
+                'Minimum': args['--min'],
                 'Owners': args['--owners'].split(','),
-                'Data': enc_data,
+                'Data': args['--data'],
             })
             goodquit_json(api_call('encrypt', args, upload))
 
         elif args['decrypt']:
-            if args['--file']:
-                abort('ERROR: not implemented.')
-            else:
-                dec_data = args['--str']
-
             upload = json.dumps({
                 'Name': args['--user'],
                 'Password': args['--password'],
-                'Data': dec_data,
+                'Data': args['--data'],
             })
             goodquit_json(api_call('decrypt', args, upload))
 

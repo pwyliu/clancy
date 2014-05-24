@@ -1,5 +1,2 @@
-argparse==1.2.1
-docopt==0.6.1
-requests==2.3.0
-schema==0.3.1
-wsgiref==0.1.2
+docopt>=0.6.1
+requests>=2.3.0
