@@ -16,8 +16,8 @@ Usage:
 
 Commands:
     create:           Create a new vault.
-    delegate:         Delegate your password to the server for a fixed time and number
-                      of decryptions.
+    delegate:         Delegate your password to the server for a fixed time and
+                      number of decryptions.
     encrypt:          Allows an admin user to encrypt a piece of data.
     decrypt:          Allows an admin to decrypt a piece of data.
     summary:          Provides a list of users with keys on the system.
@@ -26,22 +26,19 @@ Commands:
     base64-encode     Returns a base64 encoded string for upload to Red October.
 
 Options:
-    --time <time>      Delegation time string. Use Go duration string format. Ex: "2h30m"
-    --uses <uses>      Delegation usages. Must be an integer.
-
+    --time <time>      Delegation time string. Use Go duration string format.
+                       For example: "2h30m"
+    --uses <uses>      Delegation use limit. Must be an integer.
     --action <action>  Preform action on target. One of: revoke, admin, delete.
     --target <target>  User to modify.
-
     --owners <owners>  Comma separated list of owners.
-    --min <minimum>    Minimum delegations required to decrypt data. Must be an integer.
+    --min <minimum>    Minimum delegations required to decrypt data. Must be an
+                       integer.
     --str <string>     Base64 encoded string.
     --file <path>      Path to a file of base64 encoded data.
-
     --user <user>      User to log in as. Defaults to current user.
     --server <server>  Red October server.
     --cacert <cacert>  Absolute path to CA cert.
-
-
     -h, --help         Show this help message and exit.
     -v, --version      Show version and exit.
 """
