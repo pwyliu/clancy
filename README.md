@@ -190,7 +190,7 @@ Server Response
 }
 ```
 
-### Change your password
+#### Change your password
 ```bash
 ~$ clancy change-password
 
