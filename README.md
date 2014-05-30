@@ -19,7 +19,7 @@ Clancy will look for a JSON file called `clancy.conf` in the following locations
 * `~/.clancy/clancy.conf`
 * `/etc/clancy/clancy.conf`
 
-You can set a default for any command line argument. Typically you will just want to set `--server` and `--cacert` but you can also set other things like `--user` if your Red October username is not the same as your shell username.
+You can set a default for any optional command line argument. Typically you will just want to set `--server` and `--cacert` but you can also set other things like `--user` if your Red October username is not the same as your shell username.
 
 An example config file:
 
