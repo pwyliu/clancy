@@ -176,7 +176,7 @@ Server Response
 
 #### Modify a user
 ```bash
-(clancy)pliu@behemoth:~/projects/clancy$ ./clancy modify --action revoke --target admin2
+~$ clancy modify --action revoke --target admin2
 
 Enter password
 --------------
