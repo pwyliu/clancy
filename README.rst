@@ -11,11 +11,11 @@ Requirements
 Installation and Configuration
 ------------------------------
 
-You can install Clancy with pip
+You can install clancy with pip:
 
 .. code-block:: bash
 
-  pip install git+https://github.com/pwyliu/clancy.git
+  pip install clancy
 
 Clancy will look for a YAML file called *config.yaml* in the following locations, in order:
 
@@ -38,8 +38,8 @@ Using Clancy
 
 Here are some sample invocations. For brevity, these examples assume a config file with *server* and *cacert*. Run *clancy --help* for more details.
 
-Initialize a new vault
-~~~~~~~~~~~~~~~~~~~~~~
+Initialize New Vault
+~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
@@ -55,7 +55,7 @@ Delegate
   # As a different user
   ~$ clancy delegate --user hsolo --time 1h30m --uses 1
 
-Encrypt data
+Encrypt Data
 ~~~~~~~~~~~~
 
 .. code-block:: bash
@@ -78,7 +78,7 @@ Encrypt data
     "Status": "ok"
   }
 
-Decrypt data
+Decrypt Data
 ~~~~~~~~~~~~
 
 .. code-block:: bash
@@ -95,11 +95,11 @@ Decrypt data
     "Status": "ok"
   }
 
-View summary, modify a user, change your password
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+View Summary, Modify User, Change Password
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
   ~$ clancy summary
-  ~$ clancy modify --action revoke --target admin2
+  ~$ clancy modify --action revoke --target dvader
   ~$ clancy change-password
