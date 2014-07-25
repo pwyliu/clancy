@@ -53,8 +53,9 @@ coverage.xml
 docs/_build/
 
 # Self
-venv
+venv/
 .idea/
 instance/
 *.swp
-clancy.conf
+*.conf
+*.yaml

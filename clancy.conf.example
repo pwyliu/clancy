@@ -1,6 +1,0 @@
-{
-  "_comment": "CLI params will override these settings.",
-  "--user": "SomeDifferentUsername",
-  "--server": "redoctober.mydomain.local",
-  "--cacert": "/etc/ssl/certs/my_cacert.pem"
-}
