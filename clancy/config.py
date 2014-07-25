@@ -1,7 +1,9 @@
 import os
+
 import kaptan
 from yaml.parser import ParserError, ScannerError
 from schema import Schema, Use, And, SchemaError, Optional
+
 from .utils import abort, warn
 
 

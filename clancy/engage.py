@@ -1,4 +1,5 @@
 import getpass
+
 from .utils import goodquit_json, read_file
 from .redoctober import api_call
 

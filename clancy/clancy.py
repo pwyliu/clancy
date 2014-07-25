@@ -1,6 +1,6 @@
 """clancy
 
-Command line client for Red October
+A command line client for Red October.
 
 Usage:
     clancy create [--user <user> --server <server> --cacert <cacert_path>]
@@ -43,10 +43,13 @@ Options:
     -h, --help         Show this help message and exit.
     -v, --version      Show version and exit.
 """
-__VERSION__ = '0.0.2'
+
+__version__ = '0.0.2'
 
 import sys
+
 from docopt import docopt
+
 from .config import load_args
 from .utils import authenticate, encode_b64str, goodquit
 from .engage import engage
@@ -54,7 +57,7 @@ from .engage import engage
 
 def main():
     try:
-        docopt_args = docopt(__doc__, version=__VERSION__)
+        docopt_args = docopt(__doc__, version=__version__)
 
         # b64 encode takes no args
         if docopt_args['base64-encode']:

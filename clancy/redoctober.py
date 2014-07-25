@@ -1,6 +1,8 @@
-import requests
 import json
 from socket import timeout as socket_timeout
+
+import requests
+
 from .utils import abort, warn
 
 
